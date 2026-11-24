@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClipWatch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/ui/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff5a5f'/%3E%3Cpath d='M12 9l12 7-12 7z' fill='%23111'/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5l12 7-12 7z"/></svg></span>
+    <div>
+      <h1>ClipWatch</h1>
+      <p class="sub">GTA 6 stream clipper</p>
+    </div>
+  </div>
+  <div class="top-stats" id="topStats"></div>
+  <div class="top-actions">
+    <label class="switch power" title="Master switch. Off: nothing is recorded, analyzed, scouted or clipped">
+      <input type="checkbox" id="running"><span class="track"><span class="knob"></span></span><span id="runningLabel">Off</span>
+    </label>
+    <label class="switch" title="Record the top-ranked streams from the Scout and swap in better ones">
+      <input type="checkbox" id="autopilot"><span class="track"><span class="knob"></span></span><span>Autopilot</span>
+    </label>
+    <label class="thresh" title="How many streams record at once (each ~6–8 Mbps at 1080p)">
+      <span>Streams</span>
+      <input type="number" id="maxStreams" min="1" max="10" step="1" class="num">
+    </label>
+    <button class="btn ghost" id="openFolder">Clips folder</button>
+    <button class="btn ghost icon" id="themeBtn" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="paused" id="pausedBar" hidden>
+  <span><b>ClipWatch is off.</b> Nothing is recorded, analyzed or clipped.</span>
+  <button class="btn sm primary" id="turnOn">Turn on</button>
+</div>
+
+<main class="layout">
+  <aside class="side">
+    <div class="tabs three" role="tablist">
+      <button class="tab active" data-side="scout" role="tab">Scout</button>
+      <button class="tab" data-side="live" role="tab">Live now</button>
+      <button class="tab" data-side="top" role="tab">Top clips</button>
+    </div>
+
+    <section id="side-scout">
+      <div class="side-head">
+        <span id="scoutStatus" class="muted">Starting…</span>
+        <button class="btn ghost sm" id="refreshScout">Rescan</button>
+      </div>
+      <p class="hint">Ranked by clip potential: laughs, chat spikes per hour, chat per 1K viewers, viewers, Twitch clips, and what you keep.</p>
+      <div id="scoutNotes"></div>
+      <ol class="scout-list" id="scoutList"></ol>
+      <div id="offtopic"></div>
+    </section>
+
+    <section id="side-live" hidden>
+      <form class="paste" id="pasteForm">
+        <input id="pasteUrl" type="url" placeholder="Paste a YouTube, Twitch or Kick link" autocomplete="off">
+        <button class="btn primary" type="submit">Watch</button>
+      </form>
+      <div class="side-head">
+        <span id="liveCount" class="muted">Searching…</span>
+        <button class="btn ghost sm" id="refreshLive">Refresh</button>
+      </div>
+      <div id="notes"></div>
+      <ul class="live-list" id="liveList"></ul>
+    </section>
+
+    <section id="side-top" hidden>
+      <div class="side-head">
+        <span class="muted">Most-viewed GTA VI clips, last 24 h</span>
+        <button class="btn ghost sm" id="refreshTop">Load</button>
+      </div>
+      <div id="topNote"></div>
+      <ul class="live-list" id="topList"></ul>
+    </section>
+  </aside>
+
+  <section class="main">
+    <div class="sec-head">
+      <h2>Watching <span class="count" id="watchCount"></span></h2>
+      <p class="muted">Each line is the stream's moment score. It clips when it crosses the dashed line.</p>
+    </div>
+    <div class="streams" id="streams"></div>
+
+    <div class="sec-head rules-head">
+      <h2>Rules</h2>
+      <p class="muted">A clip is made only when a stream's score crosses its line. Set anything per streamer; an empty field uses the top row.</p>
+    </div>
+    <div class="rules-wrap">
+      <table class="rules">
+        <thead><tr>
+          <th scope="col">Streamer</th><th scope="col">Record</th><th scope="col">Auto-clip</th><th scope="col">Score line</th>
+          <th scope="col">Length</th><th scope="col">Style</th><th scope="col">Auto 9:16</th><th scope="col">Max / hour</th><th scope="col">Now</th>
+        </tr></thead>
+        <tbody id="rulesBody"></tbody>
+      </table>
+    </div>
+
+    <div class="sec-head moments-head">
+      <h2>Moments</h2>
+      <div class="filters">
+        <div class="seg" id="statusFilter">
+          <button data-v="review" class="on">To review</button>
+          <button data-v="kept">Kept</button>
+          <button data-v="posted">Posted</button>
+          <button data-v="rejected">Rejected</button>
+          <button data-v="all">All</button>
+        </div>
+        <div class="chips" id="tagFilter">
+          <button data-v="funny">Funny</button>
+          <button data-v="hype">Hype</button>
+          <button data-v="loud">Loud</button>
+          <button data-v="manual">Manual</button>
+          <button data-v="topclip">Top clips</button>
+          <button data-v="long">Long</button>
+        </div>
+        <button class="btn sm ghost" id="cleanBtn" title="Delete the video files of clips you posted">Free up space</button>
+      </div>
+    </div>
+    <div class="moments" id="moments"></div>
+  </section>
+</main>
+
+<dialog class="fc-dialog" id="fcDialog" aria-labelledby="fcTitle">
+  <form method="dialog" class="fc-wrap">
+    <header class="fc-head">
+      <div>
+        <h2 id="fcTitle">Facecam for <span id="fcName"></span></h2>
+        <p class="muted">Drag a box around the webcam only. Leave out alerts, overlay panels and chat. Drag the box to move it, the corners to resize, or draw a new one.</p>
+      </div>
+      <button class="btn ghost icon" value="cancel" aria-label="Close">
+        <svg viewBox="0 0 24 24"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6z"/></svg>
+      </button>
+    </header>
+    <div class="fc-body">
+      <div class="fc-col">
+        <div class="fc-stage" id="fcStage">
+          <img id="fcImg" alt="A frame from the stream" draggable="false">
+          <div class="fc-auto" id="fcAuto" hidden><span>auto picked this</span></div>
+          <div class="fc-box" id="fcBox" tabindex="0" role="group" aria-label="Facecam box. Arrow keys move it, Shift + arrows resize it." hidden>
+            <i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i>
+          </div>
+          <div class="fc-loading" id="fcLoading"></div>
+        </div>
+        <div class="fc-under">
+          <span class="muted" id="fcState"></span>
+          <button class="btn sm" id="fcOther" type="button">Other frame</button>
+        </div>
+      </div>
+      <aside class="fc-side">
+        <figure class="fc-fig">
+          <canvas id="fcPreview" width="216" height="384" role="img" aria-label="9:16 preview of the edit"></canvas>
+          <figcaption class="muted" id="fcPrevCap">9:16 preview</figcaption>
+        </figure>
+        <label class="fc-check" id="fcRedoWrap"><input type="checkbox" id="fcRedo" checked> <span id="fcRedoTxt"></span></label>
+        <div class="fc-acts">
+          <button class="btn primary" id="fcSave" type="button" disabled>Use this box</button>
+          <button class="btn ghost" id="fcNone" type="button" title="Streamer has no webcam: use the gameplay-only layouts">No facecam</button>
+          <button class="btn ghost" id="fcAutoBtn" type="button" title="Forget the box and detect the webcam automatically again">Back to automatic</button>
+        </div>
+      </aside>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="dlg" id="cleanDialog" aria-labelledby="cleanTitle">
+  <form method="dialog" class="dlg-wrap">
+    <header class="fc-head">
+      <div>
+        <h2 id="cleanTitle">Free up space</h2>
+        <p class="muted">Deletes the video files (the 16:9 recording and its 9:16 edits) of the clips you tick. Thumbnails and the clip history stay in the dashboard. This can't be undone.</p>
+      </div>
+      <button class="btn ghost icon" value="cancel" aria-label="Close">
+        <svg viewBox="0 0 24 24"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6z"/></svg>
+      </button>
+    </header>
+    <div class="dlg-body">
+      <label class="clean-row"><input type="checkbox" id="cleanPosted" checked><span><b>Posted clips</b><small id="cleanPostedInfo">Measuring…</small></span></label>
+      <label class="clean-row"><input type="checkbox" id="cleanRejected"><span><b>Rejected clips</b><small id="cleanRejectedInfo">Measuring…</small></span></label>
+      <p class="muted small" id="cleanDisk"></p>
+      <div class="dlg-acts">
+        <button class="btn ghost" value="cancel">Cancel</button>
+        <button class="btn danger" id="cleanGo" type="button" disabled>Delete files</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="dlg" id="askDialog" aria-labelledby="askTitle">
+  <form method="dialog" class="dlg-wrap">
+    <header class="fc-head">
+      <div>
+        <h2 id="askTitle">Did you post these?</h2>
+        <p class="muted">Clips you kept or opened in Finder. Posted marks the clip as posted and deletes its video files 10 s later (thumbnail and history stay, Undo on the card).</p>
+      </div>
+      <button class="btn ghost icon" value="cancel" aria-label="Close">
+        <svg viewBox="0 0 24 24"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6z"/></svg>
+      </button>
+    </header>
+    <div class="dlg-body">
+      <ul class="ask-list" id="askList"></ul>
+      <div class="dlg-acts">
+        <button class="btn ghost" value="cancel">Close</button>
+        <button class="btn danger" id="askAll" type="button">All posted · delete files</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<footer class="credit">
+  <span>ClipWatch · free and open source</span>
+  <a href="https://siposraulmihai.xyz" target="_blank" rel="noopener">Design &amp; made by siposraulmihai.xyz</a>
+  <a href="https://github.com/SiposRaulMihai/clipwatch" target="_blank" rel="noopener">GitHub</a>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/ui/app.js"></script>
+</body>
+</html>

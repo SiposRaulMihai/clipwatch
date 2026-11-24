@@ -1,0 +1,11 @@
+# your own settings, keys and recordings stay on your computer
+.env
+config.json
+data/
+*.local.md
+.claude/
+
+.venv/
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,241 @@
+{
+  "output_dir": "~/ClipWatch/clips",
+  "port": 8792,
+  "max_streams": 3,
+  "buffer_minutes": 7,
+  "segment_seconds": 5,
+  "quality": "best[height<=1080]/best",
+  "pre_roll": 25,
+  "post_roll": 10,
+  "threshold": 6,
+  "cooldown": 45,
+  "warmup": 60,
+  "auto_clip": true,
+  "youtube_query": "gta 6 live",
+  "game_name": "Grand Theft Auto VI",
+  "kick_category_query": "Grand Theft Auto",
+  "laugh_tokens": [
+    "kekw",
+    "kek",
+    "lul",
+    "lulw",
+    "omegalul",
+    "icant",
+    "lmao",
+    "lmfao",
+    "lol",
+    "xd",
+    "haha",
+    "hahaha",
+    "jaja",
+    "ahah",
+    "pepelaugh",
+    "😂",
+    "🤣",
+    "💀",
+    "😭",
+    ":face_with_tears_of_joy:",
+    ":rolling_on_the_floor_laughing:",
+    ":skull:",
+    ":loudly_crying_face:"
+  ],
+  "hype_tokens": [
+    "wtf",
+    "no way",
+    "noway",
+    "omg",
+    "pog",
+    "pogchamp",
+    "poggers",
+    "pogu",
+    "bro",
+    "yooo",
+    "w",
+    "insane",
+    "monkas",
+    "😱",
+    "😳",
+    "🔥",
+    ":fire:",
+    ":flushed_face:"
+  ],
+  "clip_tokens": [
+    "clip",
+    "clip it",
+    "clipit",
+    "clipped",
+    "clip that"
+  ],
+  "stream_quality": "1080p60,1080p,720p60,720p,best",
+  "auto_edit": true,
+  "edit_style": "streamer",
+  "edit_before": 12,
+  "edit_after": 7,
+  "whisper_model": "small",
+  "hook_writer": "local",
+  "codex_model": "",
+  "censor": true,
+  "english_only": true,
+  "languages": [
+    "en"
+  ],
+  "scout": true,
+  "autopilot": true,
+  "scout_max": 16,
+  "scout_youtube_max": 6,
+  "scout_refresh_min": 5,
+  "autopilot_min_watch_min": 15,
+  "autopilot_margin": 12,
+  "gta_only": true,
+  "scout_weights": {
+    "laughs": 0.3,
+    "spikes": 0.25,
+    "engagement": 0.2,
+    "viewers": 0.15,
+    "clips": 0.1
+  },
+  "favorites": [
+    {
+      "name": "IShowSpeed",
+      "platform": "youtube",
+      "channel": "@IShowSpeed",
+      "country": "US"
+    },
+    {
+      "name": "Kai Cenat",
+      "platform": "twitch",
+      "channel": "kaicenat",
+      "country": "US"
+    },
+    {
+      "name": "Jynxzi",
+      "platform": "twitch",
+      "channel": "jynxzi",
+      "country": "US"
+    },
+    {
+      "name": "CaseOh",
+      "platform": "twitch",
+      "channel": "caseoh_",
+      "country": "US"
+    },
+    {
+      "name": "summit1g",
+      "platform": "twitch",
+      "channel": "summit1g",
+      "country": "US"
+    },
+    {
+      "name": "HasanAbi",
+      "platform": "twitch",
+      "channel": "hasanabi",
+      "country": "US"
+    },
+    {
+      "name": "StableRonaldo",
+      "platform": "twitch",
+      "channel": "stableronaldo",
+      "country": "US"
+    },
+    {
+      "name": "Lacy",
+      "platform": "twitch",
+      "channel": "lacy",
+      "country": "US"
+    },
+    {
+      "name": "Duke Dennis",
+      "platform": "twitch",
+      "channel": "dukedennis",
+      "country": "US"
+    },
+    {
+      "name": "Agent00",
+      "platform": "twitch",
+      "channel": "agent00",
+      "country": "US"
+    },
+    {
+      "name": "Fanum",
+      "platform": "twitch",
+      "channel": "fanum",
+      "country": "US"
+    },
+    {
+      "name": "Sketch",
+      "platform": "twitch",
+      "channel": "sketch",
+      "country": "US"
+    },
+    {
+      "name": "Ludwig",
+      "platform": "youtube",
+      "channel": "@ludwig",
+      "country": "US"
+    },
+    {
+      "name": "Valkyrae",
+      "platform": "youtube",
+      "channel": "@Valkyrae",
+      "country": "US"
+    },
+    {
+      "name": "Adin Ross",
+      "platform": "kick",
+      "channel": "adinross",
+      "country": "US"
+    },
+    {
+      "name": "N3on",
+      "platform": "kick",
+      "channel": "n3on",
+      "country": "US"
+    },
+    {
+      "name": "Angryginge",
+      "platform": "twitch",
+      "channel": "angryginge13",
+      "country": "UK"
+    },
+    {
+      "name": "TommyInnit",
+      "platform": "twitch",
+      "channel": "tommyinnit",
+      "country": "UK"
+    },
+    {
+      "name": "KSI",
+      "platform": "youtube",
+      "channel": "@KSI",
+      "country": "UK"
+    },
+    {
+      "name": "Sidemen",
+      "platform": "youtube",
+      "channel": "@Sidemen",
+      "country": "UK"
+    }
+  ],
+  "target_clips_per_hour": 0,
+  "min_clip_score": 1.2,
+  "max_edit_queue": 12,
+  "jump_cuts": true,
+  "cut_min_gap": 0.6,
+  "cut_pulse": true,
+  "reaction_sticker": true,
+  "highlight_length": "best",
+  "long_pre_roll": 50,
+  "long_post_roll": 20,
+  "long_min": 30,
+  "long_max": 45,
+  "long_every_min": 12,
+  "min_free_gb": 10,
+  "best_min": 60,
+  "best_max": 90,
+  "best_pre_roll": 75,
+  "best_post_roll": 30,
+  "max_candidates": 2,
+  "running": false,
+  "max_per_hour": 0,
+  "ai_model": "sonnet"
+}
