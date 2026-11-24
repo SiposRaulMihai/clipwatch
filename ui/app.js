@@ -368,7 +368,18 @@ async function refresh() {
   }
 }
 setInterval(refresh, 2000);
-refresh();
+// entry animation: stays at least 1.6 s, leaves as soon as the dashboard has its data (max 5 s)
+const splashAt = Date.now();
+function hideSplash() {
+  const sp = $("#splash");
+  if (!sp || sp.classList.contains("out")) return;
+  setTimeout(() => {
+    sp.classList.add("out");
+    setTimeout(() => sp.remove(), 700);
+  }, Math.max(0, 1600 - (Date.now() - splashAt)));
+}
+refresh().finally(hideSplash);
+setTimeout(hideSplash, 5000);
 
 /* ---------- events ---------- */
 document.addEventListener("click", async (e) => {
